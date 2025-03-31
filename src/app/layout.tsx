@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: 'Copilot app for token console',
 };
 
-export const theme = 'light';
+const theme = 'light';
 
 export default function RootLayout({
   children,
