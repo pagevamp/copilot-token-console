@@ -24,7 +24,7 @@ export const getNotifications = async (_req: NextRequest) => {
 
 export const createNotification = async (req: NextRequest) => {
   const payload: NotificationType = NotificationSchema.parse(await req.json());
-  // await triggerNotification(payload);
+  await triggerNotification(payload);
   const data = await notificationService.createNotification(
     payload,
     defaultSelect

@@ -12,7 +12,7 @@ import { getTokenPayload } from '@/actions/token';
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { token: string };
+  searchParams: Promise<{ token: string }>;
 }) {
   const queryClient = new QueryClient();
 
