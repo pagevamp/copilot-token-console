@@ -3,6 +3,7 @@ import { getRequest } from '@/helper/axios.helper';
 import { copilotAPIKey, copilotBaseAPIUri } from '@/config';
 import { Token } from '@/types/token.dto';
 import { CopilotApi } from '@/utils/CopilotApi';
+import axios from 'axios';
 
 const headers = {
   accept: 'application/json',
@@ -27,28 +28,55 @@ export const getElementDetailFromId = async ({
   id: string;
   idKey: string;
 }) => {
-  let url = copilotBaseAPIUri;
+  try {
+    let url = copilotBaseAPIUri;
 
-  switch (idKey) {
-    case 'clientId':
-      url += `/clients/${id}`;
-      break;
+    switch (idKey) {
+      case 'clientId':
+        url += `/clients/${id}`;
+        break;
 
-    case 'companyId':
-      url += `/companies/${id}`;
-      break;
+      case 'companyId':
+        url += `/companies/${id}`;
+        break;
 
-    case 'internalUserId':
-      url += `/users/${id}`;
-      break;
+      case 'internalUserId':
+        url += `/internal-users/${id}`;
+        break;
 
-    case 'workspaceId':
-      url += `/workspaces/${id}`;
-      break;
+      case 'workspaceId':
+        url += `/workspaces/${id}`;
+        break;
 
-    default:
-      return 'Undefined';
+      default:
+        return 'Undefined';
+    }
+
+    return await getRequest(url, headers);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const response = error.response;
+      if (response && response.data) {
+        const { message, statusCode } = response.data;
+        if (statusCode !== 200) {
+          console.log('Conflict error: ', message);
+          return { message, statusCode };
+        }
+        return { message, statusCode };
+      }
+      if (error.code === 'ECONNREFUSED') {
+        return {
+          message:
+            'Connection refused. Please try again later or contact support.',
+          statusCode: 500,
+        };
+      }
+    } else {
+      return {
+        message:
+          'Unknown server error, Please try again later or contact support.',
+        statusCode: 500,
+      };
+    }
   }
-
-  return await getRequest(url, headers);
 };
