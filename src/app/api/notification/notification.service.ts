@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { NotificationType } from '@/types/notification.dto';
 import { NotificationSelectType } from './notification.controller';
+import { triggerNotification } from '@/actions/notification';
 
 const prisma = new PrismaClient();
 
@@ -32,8 +33,13 @@ export const getNotificationById = async (
 
 export const createNotification = async (
   data: NotificationType,
-  select: NotificationSelectType | Record<string, boolean>
+  select: NotificationSelectType | Record<string, boolean>,
+  token: string
 ) => {
+  const notification = await triggerNotification(data, token);
+  if (!notification) {
+    throw new Error('Failed to trigger notification');
+  }
   return await prisma.notification.create({
     data,
     select,

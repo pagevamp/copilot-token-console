@@ -3,6 +3,7 @@ import { copilotApi } from 'copilot-node-sdk';
 
 import { copilotAPIKey } from '@/config';
 import { Token, TokenSchema } from '@/types/token.dto';
+import { NotificationType } from '@/types/notification.dto';
 
 export class CopilotApi {
   private copilot: SDK;
@@ -20,5 +21,29 @@ export class CopilotApi {
     }
 
     return TokenSchema.parse(await getTokenPayload());
+  }
+
+  async triggerNotification({
+    title,
+    description,
+    senderId,
+    recipientId,
+  }: NotificationType) {
+    const body = {
+      deliveryTargets: {
+        inProduct: { title, body: description },
+      },
+      recipientId,
+      senderId,
+    };
+    const triggerNotification = await this.copilot.createNotification({
+      requestBody: body,
+    });
+    if (!triggerNotification) {
+      console.error(`Failed to trigger notification: ${this.token}`);
+      return null;
+    }
+
+    return triggerNotification;
   }
 }

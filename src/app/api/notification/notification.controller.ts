@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as notificationService from './notification.service';
 import { NotificationSchema, NotificationType } from '@/types/notification.dto';
 import httpStatus from 'http-status';
-import { triggerNotification } from '@/actions/notification';
 
 const defaultSelect = {
   id: true,
@@ -24,10 +23,11 @@ export const getNotifications = async (_req: NextRequest) => {
 
 export const createNotification = async (req: NextRequest) => {
   const payload: NotificationType = NotificationSchema.parse(await req.json());
-  await triggerNotification(payload);
+  const token = req.headers.get('X-TOKEN') as string;
   const data = await notificationService.createNotification(
     payload,
-    defaultSelect
+    defaultSelect,
+    token
   );
   return NextResponse.json({ data });
 };
