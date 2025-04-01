@@ -6,7 +6,15 @@ const CardWithCopy = ({ text }: { text: string }) => {
   const [copyToClipboard, setCopyToClipboard] = React.useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    document.execCommand('copy');
+    textarea.remove();
+
+    // navigator.clipboard.writeText(text); // iframe does not allow to copy unless allow="clipboard-write"
     setCopyToClipboard(true);
     setTimeout(() => {
       setCopyToClipboard(false);

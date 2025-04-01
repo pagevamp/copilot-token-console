@@ -12,7 +12,15 @@ function InputWithCopy({
   const [copyToClipboard, setCopyToClipboard] = React.useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(defaultValue as string);
+    const textarea = document.createElement('textarea');
+    textarea.value = defaultValue as string;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    document.execCommand('copy');
+    textarea.remove();
+
+    // navigator.clipboard.writeText(defaultValue as string); // iframe does not allow to copy unless allow="clipboard-write"
     setCopyToClipboard(true);
     setTimeout(() => {
       setCopyToClipboard(false);

@@ -30,7 +30,6 @@ export const getRequest = async (
   headers?: Record<string, any>
 ) => {
   const data = await axios.get(url, { headers });
-  console.log({ data });
   return data.data;
 };
 
