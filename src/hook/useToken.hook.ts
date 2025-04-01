@@ -21,6 +21,7 @@ export const useToken = () => {
         setTokenBasedInfo(newCache);
       } catch (error: any) {
         setIsLoading(false);
+        console.log({ error });
         toast.error(error?.message || 'Something went wrong');
       }
     }
